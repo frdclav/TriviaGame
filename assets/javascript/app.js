@@ -75,5 +75,12 @@ $(document).ready(
 
         $('#question').html(' <h3 class="my-auto mx-auto ">' + q1.questionText + '</h3>')
             // need a function that loops through q1.choiceList and puts it on the page
+        choicesArr = q1.choiceList
+        for (let index = 0; index < choicesArr.length; index++) {
+            const element = choicesArr[index];
+            $("#answer-list").append('<li class="choice list-group-item border-0" id="answer-' + index + 1 + '">' + element.choiceText + '</li>')
+
+        }
+
     }
 )
