@@ -74,6 +74,6 @@ $(document).ready(
 
 
         $('#question').html(' <h3 class="my-auto mx-auto ">' + q1.questionText + '</h3>')
-
+            // need a function that loops through q1.choiceList and puts it on the page
     }
 )
