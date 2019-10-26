@@ -8,7 +8,9 @@ function Question(question, choices, answer) {
     this.answer = answer;
 
     this.checkAnswer = function (choice) {
-        if (choice === this.answer.check()) {
+        console.log('choice is', choice)
+        console.log('answer is ', this.answer)
+        if (choice === this.answer) {
             return true
         } else {
             return false
@@ -18,12 +20,12 @@ function Question(question, choices, answer) {
 
 //  constructor for Choice object
 //  takes 1 arguement, text is the text for the choice 
-function Choice(text) {
-    this.choiceText = text
-    this.check = function () {
-        return this.choiceText
-    }
-}
+// function Choice(text) {
+//     this.choiceText = text
+//     this.check = function () {
+//         return this.choiceText
+//     }
+// }
 
 
 // timer object repurposed from in class activities
@@ -211,12 +213,31 @@ answersList.addClass("list-group mx-auto my-auto");
 answersList.attr('id', 'answer-list');
 answersRow.append(answersList);
 
+// creat var for wrong answer screen
+var wrongDiv = $("<div>");
+wrongDiv.addClass("row my-3");
+var wrongHeader = $("<h2>");
+wrongHeader.addClass("my-auto mx-auto");
+wrongHeader.text("Nope!");
+wrongDiv.append(wrongHeader);
 
-// sample question creation
-var q1_choices = [new Choice("Lisa"), new Choice("Jennie"), new Choice("Rose"), new Choice("Jisoo"), new Choice("Dahyun")]
-var q1 = new Question("Who is not a member of Blackpink?", q1_choices, q1_choices[4])
-// array of questions
-var questionList = [q1];
+var correctAnswerDiv = $("<div>");
+correctAnswerDiv.addClass("row");
+var correctAnswer = $("<h4>");
+correctAnswer.addClass("my-auto mx-auto");
+correctAnswer.attr('id', 'corAns');
+correctAnswerDiv.append(correctAnswer);
+
+//create var for correct answer screen
+var rightDiv = $("<div>");
+rightDiv.addClass("row my-3");
+var rightHeader = $("<h2>");
+rightHeader.addClass("my-auto mx-auto");
+rightHeader.text("Correct!");
+rightDiv.append(rightHeader);
+
+var questionList;
+
 
 function showTitleOnly() {
 
@@ -238,10 +259,26 @@ function showAnswers(ques) {
     var choicesArr = ques.choiceList
     for (let index = 0; index < choicesArr.length; index++) {
         const element = choicesArr[index];
-        $("#answer-list").append('<li class="choice list-group-item border-0 m-1" id="answer-' + index + 1 + '">' + element.choiceText + '</li>')
+        $("#answer-list").append('<li class="choice list-group-item border-0 m-1" id="answer-' + index + 1 + '">' + element + '</li>')
     }
 }
+function userWrong(ques) {
+    $("#main").append(wrongDiv);
+    $("#main").append(correctAnswerDiv);
+    $("#corAns").text("The correct answer was: " + ques.answer);
+}
+function userRight() {
+    $("#main").append(rightDiv);
+}
 function init() {
+    // sample question creation
+    var q1_choices = ["Lisa", "Jennie", "Rose", "Jisoo", "Dahyun"]
+    var q1 = new Question("Who is not a member of Blackpink?", q1_choices, q1_choices[4])
+
+    var q2_choices = ["BBIBBI", "What is Love?", "DDU-DU DDU-DU"]
+    var q2 = new Question("Which of these is a Blackpink song?", q2_choices, q2_choices[2])
+    // array of questions
+    questionList = [q2, q1];
     // q_index = 0
     correct = 0
     incorrect = 0
@@ -260,24 +297,81 @@ function init() {
 }
 
 function nextQuestion() {
-    curQuestion = questionList.shift();
-    showTitleOnly();
-    addTimerRow();
-    var questionTime = new Timer(30, $("#curTime"));
-    // questionTime.start();
-    showQuestion(curQuestion);
-    showAnswers(curQuestion);
-    $('.choice').hover(
-        function () {
-            $(this).removeClass("border-0")
-        }, function () {
-            $(this).addClass("border-0")
-        });
-    $('.choice').on('click', function () {
-        let ans = $(this).text()
-        console.log(ans)
-        console.log(q1.checkAnswer(ans))
-    })
+    if (questionList.length === 0) {
+        showEndScreen();
+    } else {
+        curQuestion = questionList.shift();
+        showTitleOnly();
+        addTimerRow();
+        var questionTime = new Timer(30, $("#curTime"));
+        // questionTime.start();
+        showQuestion(curQuestion);
+        showAnswers(curQuestion);
+        $('.choice').hover(
+            function () {
+                $(this).removeClass("border-0")
+            }, function () {
+                $(this).addClass("border-0")
+            });
+        $('.choice').on('click', function () {
+            let ans = $(this).text();
+            let result = curQuestion.checkAnswer(ans);
+            console.log(ans, result);
+            submitAnswer(result);
+        })
+    }
+
 }
 
+function submitAnswer(isCorrect) {
+    $("#question").empty();
+    $("#answer-list").empty();
+    $("#question").detach();
+    $("#answers").detach();
+    setTimeout(nextQuestion, 5000);
+    if (isCorrect) {
+        correct++;
+        userRight();
+    } else {
+        incorrect++;
+        userWrong(curQuestion);
+    }
+}
+
+function showEndScreen() {
+    showTitleOnly();
+    addTimerRow();
+    var message = $("<div>")
+    message.addClass("row my-3");
+    var messageHeader = $("<h2>");
+    messageHeader.addClass("my-auto mx-auto");
+    messageHeader.text("All done, here's how you did!");
+    message.append(messageHeader);
+
+    $("#main").append(message);
+    var statsCor = $("<div>").addClass("row");
+    var statsCorP = $("<h4>").addClass("text-center mx-auto");
+    var statsIn = $("<div>").addClass("row ");
+    var statsInP = $("<h4>").addClass("text-center mx-auto");
+    var statsUn = $("<div>").addClass("row");
+    var statsUnP = $("<h4>").addClass("text-center mx-auto");
+
+    statsCorP.text("Correct Answers: " + correct);
+    statsInP.text("Incorrect Answers: " + incorrect);
+    statsUnP.text("Unanswered: " + unanswered);
+    statsCor.append(statsCorP)
+    statsIn.append(statsInP)
+    statsUn.append(statsUnP)
+    $("#main").append(statsCor, statsIn, statsUn);
+    var reset = $("<div>");
+    reset.addClass("row");
+    var resetBtn = $("<button>");
+    resetBtn.addClass("btn btn-primary mx-auto my-2");
+    resetBtn.attr('type', 'button');
+    resetBtn.attr('id', 'resetBtn');
+    resetBtn.text('Play Again?')
+    reset.append(resetBtn);
+    $("#main").append(reset);
+    $("#resetBtn").on('click', function () { console.log('you clicked reset!'); init(); })
+}
 init();
