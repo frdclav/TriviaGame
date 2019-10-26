@@ -51,6 +51,7 @@ function Timer(seconds, displayId) {
         self.time--;
         if (self.time === 0) {
             self.stop()
+            timeIsUp();
         }
         if (self.display) {
             self.display.text("Time Remaining: " + self.showTime());
@@ -237,7 +238,7 @@ rightHeader.text("Correct!");
 rightDiv.append(rightHeader);
 
 var questionList;
-
+var questionTime;
 
 function showTitleOnly() {
 
@@ -297,14 +298,17 @@ function init() {
 }
 
 function nextQuestion() {
+    if (questionTime) {
+        questionTime.stop();
+    }
     if (questionList.length === 0) {
         showEndScreen();
     } else {
         curQuestion = questionList.shift();
         showTitleOnly();
         addTimerRow();
-        var questionTime = new Timer(30, $("#curTime"));
-        // questionTime.start();
+        questionTime = new Timer(30, $("#curTime"));
+        questionTime.start();
         showQuestion(curQuestion);
         showAnswers(curQuestion);
         $('.choice').hover(
@@ -324,6 +328,7 @@ function nextQuestion() {
 }
 
 function submitAnswer(isCorrect) {
+
     $("#question").empty();
     $("#answer-list").empty();
     $("#question").detach();
@@ -337,10 +342,20 @@ function submitAnswer(isCorrect) {
         userWrong(curQuestion);
     }
 }
+function timeIsUp() {
+    $("#question").empty();
+    $("#answer-list").empty();
+    $("#question").detach();
+    $("#answers").detach();
+    setTimeout(nextQuestion, 5000);
+    unanswered++;
+    userWrong(curQuestion);
+}
 
 function showEndScreen() {
     showTitleOnly();
     addTimerRow();
+    questionTime.stop();
     var message = $("<div>")
     message.addClass("row my-3");
     var messageHeader = $("<h2>");
