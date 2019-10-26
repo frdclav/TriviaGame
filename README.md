@@ -17,5 +17,6 @@
 * On the final screen, show the number of correct answers, incorrect answers, and an option to restart the game (without reloading the page).
 
 ### Things to Do:
-* Set up front end with bootstrap
-* code js
+* pick a theme
+* add more question
+* make it look nice
