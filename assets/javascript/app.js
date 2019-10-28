@@ -2,10 +2,11 @@
 //  question is the text for the question
 //  choices is an array of possible choices and should contain Choice objects
 //  answer is a Choice object and is the correct answer, it should also exist within the choices array  
-function Question(question, choices, answer) {
+function Question(question, choices, answer, image) {
     this.questionText = question;
     this.choiceList = choices;
     this.answer = answer;
+    this.img = image;
 
     this.checkAnswer = function (choice) {
         console.log('choice is', choice)
@@ -146,6 +147,14 @@ rightHeader.addClass("my-auto mx-auto");
 rightHeader.text("Correct!");
 rightDiv.append(rightHeader);
 
+// create var for image div
+var imgDiv = $("<div>")
+imgDiv.addClass("row my-3")
+var imgDivContent = $("<img>")
+imgDivContent.attr('id', 'imgDivContent')
+imgDivContent.addClass("rounded mx-auto d-block border");
+imgDiv.append(imgDivContent)
+
 var questionList;
 var questionTime;
 
@@ -162,7 +171,7 @@ function addTimerRow() {
 }
 function showQuestion(ques) {
     $("#main").append(questionRow);
-    $('#question').html(' <h3 class="my-auto mx-auto ">' + ques.questionText + '</h3>');
+    $('#question').html(' <h3 class="my-auto mx-auto p-4">' + ques.questionText + '</h3>');
 }
 function showAnswers(ques) {
     $("#main").append(answersRow);
@@ -176,26 +185,32 @@ function userWrong(ques) {
     $("#main").append(wrongDiv);
     $("#main").append(correctAnswerDiv);
     $("#corAns").text("The correct answer was: " + ques.answer);
+    $("#main").append(imgDivContent);
+    $("#imgDivContent").attr('src', curQuestion.img)
+
 }
 function userRight() {
     $("#main").append(rightDiv);
+
+    $("#main").append(imgDivContent);
+    $("#imgDivContent").attr('src', curQuestion.img)
 }
 function init() {
     // sample question creation
     var q1_choices = ["Lisa", "Jennie", "Rose", "Jisoo", "Dahyun"]
-    var q1 = new Question("Who is not a member of Blackpink?", q1_choices, q1_choices[4])
+    var q1 = new Question("Who is not a member of Blackpink?", q1_choices, q1_choices[4], "assets/images/dahyun.gif")
 
     var q2_choices = ["BBIBBI", "What is Love?", "DDU-DU DDU-DU"]
-    var q2 = new Question("Which of these is a Blackpink song?", q2_choices, q2_choices[2])
+    var q2 = new Question("Which of these is a Blackpink song?", q2_choices, q2_choices[2], "assets/images/bp.gif")
 
     var q3_choices = ["Dara", "IU", "Heize", "Hwasa", "Tiffany"]
-    var q3 = new Question("Which artist collaborates with DEAN in the song 'And July'", q3_choices, q3_choices[2])
+    var q3 = new Question("Which artist collaborates with DEAN in the song 'And July'", q3_choices, q3_choices[2], "assets/images/heizedean.gif")
 
     var q4_choices = ["Lee Hyori", "Ock Joo-hyun", "Lee Jin", "Sung Yu-ri"]
-    var q4 = new Question("Which member of Fin K.L. is a guest on the very first episode of variety show 'Running Man'?", q4_choices, q4_choices[0])
+    var q4 = new Question("Which member of Fin K.L. is a guest on the very first episode of variety show 'Running Man'?", q4_choices, q4_choices[0], "assets/images/finkl.gif")
 
     var q5_choices = ["Red Velvet", "Mamamoo", "TWICE", "IZ*ONE"]
-    var q5 = new Question("'Twit' singer Hwasa is a member of which idol girl group?", q5_choices, q5_choices[1])
+    var q5 = new Question("'Twit' singer Hwasa is a member of which idol girl group?", q5_choices, q5_choices[1], "assets/images/hwasa.gif")
     // array of questions
     questionList = [q2, q1, q3, q4, q5];
     correct = 0
