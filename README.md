@@ -17,6 +17,6 @@
 * On the final screen, show the number of correct answers, incorrect answers, and an option to restart the game (without reloading the page).
 
 ### Things to Do:
-* pick a theme
-* add more question
-* make it look nice
+* Base of the game logic is complete with 5 questions (KPOP releted again haha)
+* The code could be cleaned up to be cleaner.
+* The UI is super simple, with no styling, could be made prettier
