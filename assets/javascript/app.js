@@ -18,15 +18,6 @@ function Question(question, choices, answer) {
     }
 }
 
-//  constructor for Choice object
-//  takes 1 arguement, text is the text for the choice 
-// function Choice(text) {
-//     this.choiceText = text
-//     this.check = function () {
-//         return this.choiceText
-//     }
-// }
-
 
 // timer object repurposed from in class activities
 function Timer(seconds, displayId) {
@@ -85,97 +76,15 @@ function Timer(seconds, displayId) {
     self.display.text("Time Remaining: " + self.showTime());
 }
 
-
-
-
-//  testing timer
-// var questionTime = new Timer(15, $("#curTime"));
-// questionTime.start();
-// var testInterval = setInterval(function () { console.log(questionTime.showTime()) }, 1000);
-// setTimeout(function () {
-//     questionTime.stop(); clearInterval(testInterval);
-// }, 1000 * 15);
-
-
-
-
-// console.log(q1)
-// console.log(q1.checkAnswer("Jennie"), "false")
-// console.log(q1.checkAnswer("Dahyun"), "true")
-// var blah = q1.answer.check()
-// console.log(blah, q1.answer.check())
-
-
-
-
-// $(document).ready(
-//     function () {
-//         // constructor for Question object takes three arguments: 
-//         //  question is the text for the question
-//         //  choices is an array of possible choices and should contain Choice objects
-//         //  answer is a Choice object and is the correct answer, it should also exist within the choices array  
-//         function Question(question, choices, answer) {
-//             this.questionText = question;
-//             this.choiceList = choices;
-//             this.answer = answer;
-
-//             this.checkAnswer = function (choice) {
-//                 if (choice === this.answer.check()) {
-//                     return true
-//                 } else {
-//                     return false
-//                 }
-//             }
-//         }
-
-//         //  constructor for Choice object
-//         //  takes 1 arguement, text is the text for the choice 
-//         function Choice(text) {
-//             this.choiceText = text
-//             this.check = function () {
-//                 return this.choiceText
-//             }
-//         }
-
-//         // sample question creation
-//         var q1_choices = [new Choice("Lisa"), new Choice("Jennie"), new Choice("Rose"), new Choice("Jisoo"), new Choice("Dahyun")]
-//         var q1 = new Question("Who is not a member of Blackpink?", q1_choices, q1_choices[4])
-//         // console.log(q1)
-//         // console.log(q1.checkAnswer("Jennie"), "false")
-//         // console.log(q1.checkAnswer("Dahyun"), "true")
-//         // var blah = q1.answer.check()
-//         // console.log(blah, q1.answer.check())
-
-
-//         $('#question').html(' <h3 class="my-auto mx-auto ">' + q1.questionText + '</h3>')
-//         // need a function that loops through q1.choiceList and puts it on the page
-//         choicesArr = q1.choiceList
-// for (let index = 0; index < choicesArr.length; index++) {
-//     const element = choicesArr[index];
-//     $("#answer-list").append('<li class="choice list-group-item border-0 m-2" id="answer-' + index + 1 + '">' + element.choiceText + '</li>')
-
-//         }
-// $('.choice').hover(
-//     function () {
-//         $(this).removeClass("border-0")
-//     }, function () {
-//         $(this).addClass("border-0")
-//     });
-// $('.choice').on('click', function () {
-//     let ans = $(this).text()
-//     console.log(ans)
-//     console.log(q1.checkAnswer(ans))
-// })
-//     }
-// )
-
 // set global variables:
 // question_index (removed), num of correct answers, num of incorrect answers, num of questions unanswered, current question
-// var q_index;
+
 var correct;
 var incorrect;
 var unanswered;
 var curQuestion;
+var curQuestionDone = true;
+
 
 //  create var for the title:
 
@@ -278,12 +187,21 @@ function init() {
 
     var q2_choices = ["BBIBBI", "What is Love?", "DDU-DU DDU-DU"]
     var q2 = new Question("Which of these is a Blackpink song?", q2_choices, q2_choices[2])
+
+    var q3_choices = ["Dara", "IU", "Heize", "Hwasa", "Tiffany"]
+    var q3 = new Question("Which artist collaborates with DEAN in the song 'And July'", q3_choices, q3_choices[2])
+
+    var q4_choices = ["Lee Hyori", "Ock Joo-hyun", "Lee Jin", "Sung Yu-ri"]
+    var q4 = new Question("Which member of Fin K.L. is a guest on the very first episode of variety show 'Running Man'?", q4_choices, q4_choices[0])
+
+    var q5_choices = ["Red Velvet", "Mamamoo", "TWICE", "IZ*ONE"]
+    var q5 = new Question("'Twit' singer Hwasa is a member of which idol girl group?", q5_choices, q5_choices[1])
     // array of questions
-    questionList = [q2, q1];
-    // q_index = 0
+    questionList = [q2, q1, q3, q4, q5];
     correct = 0
     incorrect = 0
     unanswered = 0
+    curQuestionDone = true;
     showTitleOnly();
     var startDiv = $("<div>");
     startDiv.addClass("row");
@@ -298,6 +216,7 @@ function init() {
 }
 
 function nextQuestion() {
+    curQuestionDone = false;
     if (questionTime) {
         questionTime.stop();
     }
@@ -333,6 +252,7 @@ function submitAnswer(isCorrect) {
     $("#answer-list").empty();
     $("#question").detach();
     $("#answers").detach();
+    curQuestionDone = true;
     setTimeout(nextQuestion, 5000);
     if (isCorrect) {
         correct++;
@@ -343,13 +263,16 @@ function submitAnswer(isCorrect) {
     }
 }
 function timeIsUp() {
-    $("#question").empty();
-    $("#answer-list").empty();
-    $("#question").detach();
-    $("#answers").detach();
-    setTimeout(nextQuestion, 5000);
-    unanswered++;
-    userWrong(curQuestion);
+    if (!curQuestionDone) {
+        $("#question").empty();
+        $("#answer-list").empty();
+        $("#question").detach();
+        $("#answers").detach();
+        setTimeout(nextQuestion, 5000);
+        unanswered++;
+        userWrong(curQuestion);
+    }
+
 }
 
 function showEndScreen() {
